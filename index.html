@@ -3,373 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Presensi Digital</title>
 
     <link rel="stylesheet" href="style.css">
 
-    <!-- QR Code Generator -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-    <!-- QR Scanner -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
 
 <body>
 
-    <!-- HEADER -->
-    <header class="header">
-        <div class="header-left">
-            <div class="logo">PD</div>
+    <header class="topbar">
+        <div class="logo">
+            <div class="logo-icon">✓</div>
             <div>
-                <h1>Presensi Digital</h1>
-                <p>Sistem Manajemen Kehadiran</p>
+                <h2>Presensi Digital</h2>
+                <span>Sistem Presensi Mahasiswa</span>
             </div>
-        </div>
-
-        <div class="status">
-            <span class="status-dot"></span>
-            Sistem Aktif
         </div>
     </header>
 
+    <div class="layout">
 
-    <!-- NAVIGATION -->
-    <nav class="navbar">
-        <button class="nav-btn active" onclick="showPage('dashboard', this)">
-            Dashboard
-        </button>
+        <aside class="sidebar">
+            <nav>
+                <button class="nav-item active" onclick="showPage('dashboard', this)">
+                    🏠 Dashboard
+                </button>
 
-        <button class="nav-btn" onclick="showPage('generate', this)">
-            Generate QR
-        </button>
+                <button class="nav-item" onclick="showPage('generate', this)">
+                    ▣ Generate QR
+                </button>
 
-        <button class="nav-btn" onclick="showPage('scan', this)">
-            Scan Presensi
-        </button>
+                <button class="nav-item" onclick="showPage('scan', this)">
+                    📷 Scan Presensi
+                </button>
 
-        <button class="nav-btn" onclick="showPage('mahasiswa', this)">
-            Mahasiswa
-        </button>
-    </nav>
+                <button class="nav-item" onclick="showPage('students', this)">
+                    👥 Daftar Presensi
+                </button>
+            </nav>
+        </aside>
 
+        <main class="main-content">
 
-    <main class="container">
+            <!-- DASHBOARD -->
+            <section id="dashboard" class="page active-page">
 
-        <!-- ================= DASHBOARD ================= -->
-        <section id="dashboard" class="page active">
-
-            <div class="page-title">
-                <h2>Dashboard</h2>
-                <p>Ringkasan data presensi mahasiswa</p>
-            </div>
-
-            <div class="stats-grid">
-
-                <div class="stat-card">
-                    <div class="stat-icon blue">👨‍🎓</div>
-
+                <div class="page-header">
                     <div>
-                        <span>Total Mahasiswa</span>
-                        <h3 id="totalMahasiswa">0</h3>
+                        <h1>Dashboard</h1>
+                        <p>Ringkasan data presensi mahasiswa.</p>
                     </div>
                 </div>
 
+                <div class="stats-grid">
 
-                <div class="stat-card">
-                    <div class="stat-icon green">✓</div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div>
+                            <span>Total Mahasiswa</span>
+                            <h2 id="totalMahasiswa">0</h2>
+                        </div>
+                    </div>
 
+                    <div class="stat-card">
+                        <div class="stat-icon">✓</div>
+                        <div>
+                            <span>Hadir Hari Ini</span>
+                            <h2 id="hadirHariIni">0</h2>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div>
+                            <span>Tanggal</span>
+                            <h2 id="tanggalHariIni">-</h2>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="info-card">
+                    <h3>Status Sistem</h3>
+                    <p id="systemMessage">
+                        Data tersimpan di browser ini (Local Storage).
+                    </p>
+                </div>
+
+            </section>
+
+
+            <!-- GENERATE QR -->
+            <section id="generate" class="page">
+
+                <div class="page-header">
                     <div>
-                        <span>Hadir Hari Ini</span>
-                        <h3 id="hadirHariIni">0</h3>
+                        <h1>Generate QR Code</h1>
+                        <p>Buat QR Code berdasarkan data mahasiswa.</p>
                     </div>
                 </div>
 
-
-                <div class="stat-card">
-                    <div class="stat-icon orange">📅</div>
-
-                    <div>
-                        <span>Tanggal</span>
-                        <h3 id="tanggalHariIni">-</h3>
-                    </div>
-                </div>
-
-            </div>
-
-
-            <div class="dashboard-card">
-
-                <div class="card-header">
-                    <div>
-                        <h3>Informasi Sistem</h3>
-                        <p>Status koneksi sistem presensi</p>
-                    </div>
-                </div>
-
-                <div id="systemMessage" class="system-message">
-                    Menghubungkan ke Google Sheets...
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- ================= GENERATE QR ================= -->
-        <section id="generate" class="page">
-
-            <div class="page-title">
-                <h2>Generate QR Code</h2>
-                <p>Buat QR Code untuk mahasiswa</p>
-            </div>
-
-
-            <div class="content-grid">
-
-                <!-- FORM -->
                 <div class="form-card">
 
-                    <h3>Data Mahasiswa</h3>
+                    <div class="form-group">
+                        <label for="nim">NIM</label>
+                        <input
+                            type="text"
+                            id="nim"
+                            maxlength="11"
+                            placeholder="Masukkan 11 digit NIM"
+                        >
+                    </div>
 
-                    <form id="qrForm" onsubmit="generateQR(event)">
+                    <div class="form-group">
+                        <label for="nama">Nama Mahasiswa</label>
+                        <input
+                            type="text"
+                            id="nama"
+                            placeholder="Masukkan nama mahasiswa"
+                        >
+                    </div>
 
-                        <div class="form-group">
-                            <label for="nim">
-                                NIM <span>*</span>
-                            </label>
+                    <div class="form-group">
+                        <label for="kelas">Kelas</label>
+                        <input
+                            type="text"
+                            id="kelas"
+                            placeholder="Contoh: TI-2A"
+                        >
+                    </div>
 
-                            <input
-                                type="text"
-                                id="nim"
-                                name="nim"
-                                placeholder="Masukkan 11 digit NIM"
-                                maxlength="11"
-                                inputmode="numeric"
-                                autocomplete="off"
-                                required
-                                oninput="validateNIM(this)"
-                            >
+                    <div class="form-group">
+                        <label for="jurusan">Jurusan</label>
+                        <input
+                            type="text"
+                            id="jurusan"
+                            placeholder="Masukkan jurusan"
+                        >
+                    </div>
 
-                            <small id="nimHelp">
-                                NIM harus terdiri dari 11 digit angka
-                            </small>
-                        </div>
-
-
-                        <div class="form-group">
-                            <label for="nama">
-                                Nama Lengkap <span>*</span>
-                            </label>
-
-                            <input
-                                type="text"
-                                id="nama"
-                                placeholder="Masukkan nama lengkap"
-                                required
-                            >
-                        </div>
-
-
-                        <div class="form-group">
-                            <label for="kelas">
-                                Kelas
-                            </label>
-
-                            <input
-                                type="text"
-                                id="kelas"
-                                placeholder="Contoh: TI-2A"
-                            >
-                        </div>
-
-
-                        <div class="form-group">
-                            <label for="jurusan">
-                                Jurusan
-                            </label>
-
-                            <input
-                                type="text"
-                                id="jurusan"
-                                placeholder="Contoh: Teknik Informatika"
-                            >
-                        </div>
-
-
-                        <div class="form-buttons">
-
-                            <button type="submit" class="btn btn-primary">
-                                Generate QR
-                            </button>
-
-                            <button
-                                type="button"
-                                class="btn btn-secondary"
-                                onclick="clearForm()"
-                            >
-                                Reset
-                            </button>
-
-                        </div>
-
-                    </form>
+                    <button class="primary-btn" onclick="generateQR()">
+                        Generate QR Code
+                    </button>
 
                 </div>
 
+                <div id="qrResult" class="qr-result hidden">
 
-                <!-- QR RESULT -->
-                <div class="qr-card">
+                    <h3>QR Code Mahasiswa</h3>
 
-                    <h3>QR Code</h3>
+                    <div id="qrcode"></div>
 
-                    <div id="qrcode" class="qr-container">
+                    <div id="qrStudentInfo"></div>
 
-                        <div class="qr-placeholder">
-                            <div class="qr-placeholder-icon">▦</div>
-                            <p>QR Code akan muncul di sini</p>
-                        </div>
-
-                    </div>
-
-
-                    <div id="qrInfo" class="qr-info"></div>
-
-
-                    <button
-                        id="downloadBtn"
-                        class="btn btn-primary full-btn"
-                        onclick="downloadQR()"
-                        disabled
-                    >
+                    <button class="secondary-btn" onclick="downloadQR()">
                         Download QR
                     </button>
 
                 </div>
 
-            </div>
-
-        </section>
+            </section>
 
 
+            <!-- SCAN -->
+            <section id="scan" class="page">
 
-        <!-- ================= SCAN ================= -->
-        <section id="scan" class="page">
-
-            <div class="page-title">
-                <h2>Scan Presensi</h2>
-                <p>Scan QR Code mahasiswa untuk mencatat kehadiran</p>
-            </div>
-
-
-            <div class="scanner-card">
-
-                <div class="scanner-header">
-                    <h3>QR Scanner</h3>
-                    <p>Arahkan kamera ke QR Code mahasiswa</p>
-                </div>
-
-
-                <div id="reader"></div>
-
-
-                <div class="scanner-buttons">
-
-                    <button
-                        class="btn btn-primary"
-                        onclick="startScanner()"
-                    >
-                        Mulai Scanner
-                    </button>
-
-                    <button
-                        class="btn btn-secondary"
-                        onclick="stopScanner()"
-                    >
-                        Stop Scanner
-                    </button>
-
-                </div>
-
-
-                <div id="scanResult" class="scan-result">
-                    Scanner belum dijalankan.
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- ================= MAHASISWA ================= -->
-        <section id="mahasiswa" class="page">
-
-            <div class="page-title">
-                <h2>Data Mahasiswa</h2>
-                <p>Data mahasiswa yang tersimpan di Google Sheets</p>
-            </div>
-
-
-            <div class="table-card">
-
-                <div class="table-header">
-
+                <div class="page-header">
                     <div>
-                        <h3>Daftar Mahasiswa</h3>
+                        <h1>Scan Presensi</h1>
+                        <p>Scan QR Code mahasiswa untuk mencatat kehadiran.</p>
+                    </div>
+                </div>
+
+                <div class="scanner-card">
+
+                    <div id="reader"></div>
+
+                    <div id="scanResult" class="scan-result">
+                        Arahkan kamera ke QR Code mahasiswa.
                     </div>
 
-                    <button
-                        class="btn btn-primary"
-                        onclick="loadStudents()"
-                    >
-                        ↻ Refresh
+                </div>
+
+            </section>
+
+
+            <!-- DAFTAR PRESENSI -->
+            <section id="students" class="page">
+
+                <div class="page-header">
+                    <div>
+                        <h1>Daftar Presensi</h1>
+                        <p>Data presensi yang tersimpan di browser ini.</p>
+                    </div>
+
+                    <button class="danger-btn" onclick="clearData()">
+                        Hapus Data
                     </button>
+                </div>
+
+                <div class="table-card">
+
+                    <div class="table-wrapper">
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>NIM</th>
+                                    <th>Nama</th>
+                                    <th>Kelas</th>
+                                    <th>Jurusan</th>
+                                    <th>Waktu</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="studentTable">
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                    <div id="emptyData" class="empty-data">
+                        Belum ada data presensi.
+                    </div>
 
                 </div>
 
+            </section>
 
-                <div class="table-wrapper">
+        </main>
+    </div>
 
-                    <table>
-
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>NIM</th>
-                                <th>Nama</th>
-                                <th>Kelas</th>
-                                <th>Jurusan</th>
-                            </tr>
-                        </thead>
-
-                        <tbody id="studentTable">
-
-                            <tr>
-                                <td colspan="5" class="empty">
-                                    Memuat data...
-                                </td>
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <!-- NOTIFICATION -->
-    <div id="notification" class="notification"></div>
-
-
-    <!-- JAVASCRIPT -->
     <script src="script.js"></script>
 
 </body>
